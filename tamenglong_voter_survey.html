@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tamenglong Voter Preference Survey</title>
+<style>
+  :root{
+    --ink:#182233;
+    --muted:#5c6675;
+    --paper:#f3f5f8;
+    --card:#ffffff;
+    --line:#e0e4ea;
+    --accent:#2455a4;
+    --accent-dark:#173c7d;
+    --accent-light:#e9f0fb;
+    --green:#1e8e4f;
+    --green-light:#e7f6ed;
+    --blue:#2455a4;
+    --blue-light:#e9f0fb;
+    --red:#c23b3b;
+    --red-light:#fbebeb;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:0 16px 56px;
+  }
+  header{
+    padding:32px 0 20px;
+    text-align:center;
+  }
+  header h1{
+    font-size:24px;
+    font-weight:700;
+    margin:0 0 8px;
+    color:var(--ink);
+    line-height:1.3;
+  }
+  header p.sub{
+    margin:0;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.5;
+  }
+  nav.tabs{
+    display:flex;
+    gap:8px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:4px;
+    margin:20px 0;
+    position:sticky;
+    top:12px;
+    z-index:10;
+  }
+  nav.tabs button{
+    flex:1;
+    padding:10px 8px;
+    font-size:14px;
+    font-weight:600;
+    font-family:inherit;
+    border:none;
+    background:transparent;
+    color:var(--muted);
+    border-radius:7px;
+    cursor:pointer;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  nav.tabs button.active{
+    background:var(--accent);
+    color:#fff;
+  }
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .privacy-note{
+    background:var(--accent-light);
+    border:1px solid #c9dbf5;
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:13px;
+    color:var(--accent-dark);
+    line-height:1.5;
+    margin-bottom:20px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:18px;
+  }
+  .step-label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--accent);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-bottom:14px;
+  }
+  .step-num{
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--accent);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    flex-shrink:0;
+  }
+
+  .segment-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:10px;
+  }
+  .segment-card{
+    border:2px solid var(--line);
+    border-radius:10px;
+    padding:14px 10px;
+    text-align:center;
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+    background:#fbfcfd;
+    cursor:pointer;
+    transition:border-color 0.15s ease, background 0.15s ease;
+    user-select:none;
+  }
+  .segment-card:hover{border-color:#a9c2e6;}
+  .segment-card.selected{
+    border-color:var(--accent);
+    background:var(--accent-light);
+    color:var(--accent-dark);
+  }
+
+  .candidate-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    border:2px solid var(--line);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:12px;
+    cursor:pointer;
+    background:#fbfcfd;
+    transition:border-color 0.15s ease, background 0.15s ease;
+    user-select:none;
+  }
+  .candidate-card:last-child{margin-bottom:0;}
+  .candidate-card:hover{border-color:#a9c2e6;}
+  .candidate-card.selected{
+    border-color:var(--accent);
+    background:var(--accent-light);
+  }
+  .radio-dot{
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    border:2px solid var(--line);
+    flex-shrink:0;
+    position:relative;
+  }
+  .candidate-card.selected .radio-dot{border-color:var(--accent);}
+  .candidate-card.selected .radio-dot::after{
+    content:"";
+    position:absolute;
+    top:3px;left:3px;right:3px;bottom:3px;
+    border-radius:50%;
+    background:var(--accent);
+  }
+  .candidate-info .cname{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .candidate-info .cparty{
+    font-size:13px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+
+  button.primary{
+    width:100%;
+    padding:15px;
+    font-size:16px;
+    font-weight:700;
+    font-family:inherit;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:8px;
+    transition:background 0.15s ease, opacity 0.15s ease;
+  }
+  button.primary:hover{background:var(--accent-dark);}
+  button.primary:disabled{
+    background:#b7c2d1;
+    cursor:not-allowed;
+  }
+  .form-error{
+    font-size:13px;
+    color:var(--red);
+    text-align:center;
+    margin-top:10px;
+    display:none;
+  }
+  .form-error.show{display:block;}
+
+  .confirm-box{
+    text-align:center;
+    padding:32px 20px;
+  }
+  .confirm-box .check{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    background:var(--green-light);
+    color:var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+    font-size:28px;
+  }
+  .confirm-box h3{
+    margin:0 0 6px;
+    font-size:18px;
+    color:var(--ink);
+  }
+  .confirm-box p{
+    margin:0;
+    font-size:14px;
+    color:var(--muted);
+  }
+  .confirm-box button.secondary{
+    margin-top:20px;
+    padding:10px 20px;
+    font-size:14px;
+    font-weight:600;
+    font-family:inherit;
+    background:var(--paper);
+    color:var(--accent);
+    border:1px solid var(--line);
+    border-radius:8px;
+    cursor:pointer;
+  }
+
+  .already-voted{
+    text-align:center;
+    padding:28px 20px;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  .subnav{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .subnav button{
+    flex:1;
+    padding:9px;
+    font-size:13px;
+    font-weight:600;
+    font-family:inherit;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--muted);
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .subnav button.active{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+
+  .results-title{
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .total-votes{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:16px;
+  }
+  .result-row{
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:10px;
+    border:1px solid var(--line);
+  }
+  .result-row:last-child{margin-bottom:0;}
+  .result-row.rank-1{background:var(--green-light); border-color:#bfe4cd;}
+  .result-row.rank-2{background:var(--blue-light); border-color:#c9dbf5;}
+  .result-row.rank-3{background:var(--red-light); border-color:#f3cbcb;}
+  .result-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:8px;
+    gap:8px;
+  }
+  .result-name{
+    font-size:14px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .result-medal{margin-right:6px;}
+  .result-stats{
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .bar-track{
+    background:#ffffffaa;
+    border:1px solid rgba(0,0,0,0.05);
+    border-radius:5px;
+    height:14px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:5px 0 0 5px;
+    transition:width 0.3s ease;
+  }
+  .bar-fill.rank-1{background:var(--green);}
+  .bar-fill.rank-2{background:var(--blue);}
+  .bar-fill.rank-3{background:var(--red);}
+
+  .segment-select-row{
+    margin-bottom:18px;
+  }
+  select#segmentFilter{
+    width:100%;
+    padding:11px 12px;
+    font-size:14px;
+    font-family:inherit;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .segment-block{
+    margin-bottom:22px;
+  }
+  .segment-block:last-child{margin-bottom:0;}
+  .segment-block h3{
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0 0 10px;
+  }
+  .empty-note{
+    font-size:13px;
+    color:var(--muted);
+    text-align:center;
+    padding:20px 0;
+  }
+
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:var(--muted);
+    padding-top:8px;
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Tamenglong Voter Preference Survey</h1>
+    <p class="sub">Your choice matters. Select your constituency segment and preferred candidate.</p>
+  </header>
+
+  <nav class="tabs">
+    <button id="navVote" class="active">Vote</button>
+    <button id="navResults">Results</button>
+  </nav>
+
+  <!-- VOTE VIEW -->
+  <div id="voteView" class="view active">
+    <div class="privacy-note">
+      No personal information is required. This survey records only the selected segment and candidate preference.
+    </div>
+
+    <div id="voteForm">
+      <div class="card">
+        <div class="step-label"><span class="step-num">1</span> Select your segment</div>
+        <div class="segment-grid" id="segmentGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="step-label"><span class="step-num">2</span> Select your candidate</div>
+        <div id="candidateList"></div>
+      </div>
+
+      <div class="card">
+        <div class="step-label"><span class="step-num">3</span> Submit your choice</div>
+        <button class="primary" id="submitBtn">Submit Choice</button>
+        <div class="form-error" id="voteError">Please select both a segment and a candidate.</div>
+      </div>
+    </div>
+
+    <div id="confirmBox" class="card confirm-box" style="display:none;">
+      <div class="check">&#10003;</div>
+      <h3>Thank you for voting</h3>
+      <p>Your preference has been recorded successfully.</p>
+      <button class="secondary" id="viewResultsBtn">View Live Results</button>
+    </div>
+
+    <div id="alreadyVotedBox" class="card already-voted" style="display:none;">
+      A response has already been recorded from this browser. Thank you for participating.
+    </div>
+  </div>
+
+  <!-- RESULTS VIEW -->
+  <div id="resultsView" class="view">
+    <div class="subnav">
+      <button id="subOverall" class="active">Overall Results</button>
+      <button id="subSegment">Segment-Wise</button>
+    </div>
+
+    <div id="overallPanel">
+      <div class="card">
+        <div class="results-title">Live Results</div>
+        <div class="total-votes" id="overallTotal">0 total votes</div>
+        <div id="overallResults"></div>
+      </div>
+    </div>
+
+    <div id="segmentPanel" style="display:none;">
+      <div class="card segment-select-row">
+        <select id="segmentFilter">
+          <option value="all">All segments</option>
+        </select>
+      </div>
+      <div id="segmentResults"></div>
+    </div>
+  </div>
+
+  <footer>
+    This is an independent voter preference survey and is not an official election result.
+  </footer>
+</div>
+
+<script>
+const SEGMENTS = ["Akhui","Awangkhul","Tharon","Haochuang","Chiulon / Khongjaron","Dailong","Tamenglong"];
+const CANDIDATES = [
+  { id: "panmei", name: "Gaigongdin Panmei", party: "BJP" },
+  { id: "jendai", name: "Samuel Jendai", party: "INC" },
+  { id: "janghiamlung", name: "Janghiamlung Panmei", party: "NPP" }
+];
+const VOTES_KEY = "tml_votes";
+const VOTED_KEY = "tml_has_voted";
+
+let selectedSegment = null;
+let selectedCandidate = null;
+
+// ---------- Build vote form ----------
+function buildSegmentGrid() {
+  const grid = document.getElementById('segmentGrid');
+  grid.innerHTML = SEGMENTS.map(seg =>
+    '<div class="segment-card" data-segment="' + escapeAttr(seg) + '">' + escapeHtml(seg) + '</div>'
+  ).join('');
+  grid.querySelectorAll('.segment-card').forEach(el => {
+    el.addEventListener('click', () => {
+      selectedSegment = el.getAttribute('data-segment');
+      grid.querySelectorAll('.segment-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+  });
+}
+
+function buildCandidateList() {
+  const list = document.getElementById('candidateList');
+  list.innerHTML = CANDIDATES.map(c =>
+    '<div class="candidate-card" data-candidate="' + c.id + '">' +
+      '<div class="radio-dot"></div>' +
+      '<div class="candidate-info">' +
+        '<div class="cname">' + escapeHtml(c.name) + '</div>' +
+        '<div class="cparty">' + escapeHtml(c.party) + '</div>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+  list.querySelectorAll('.candidate-card').forEach(el => {
+    el.addEventListener('click', () => {
+      selectedCandidate = el.getAttribute('data-candidate');
+      list.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+  });
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/"/g, '&quot;');
+}
+
+// ---------- Storage ----------
+async function loadVotes() {
+  try {
+    const result = await window.storage.get(VOTES_KEY, true);
+    return result ? JSON.parse(result.value) : [];
+  } catch (e) {
+    return [];
+  }
+}
+async function saveVotes(list) {
+  try {
+    await window.storage.set(VOTES_KEY, JSON.stringify(list), true);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+async function hasAlreadyVoted() {
+  try {
+    const result = await window.storage.get(VOTED_KEY, false);
+    return !!result;
+  } catch (e) {
+    return false;
+  }
+}
+async function markVoted() {
+  try {
+    await window.storage.set(VOTED_KEY, "1", false);
+  } catch (e) {}
+}
+
+// ---------- Submit ----------
+async function handleSubmit() {
+  const errorEl = document.getElementById('voteError');
+  if (!selectedSegment || !selectedCandidate) {
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  const votes = await loadVotes();
+  votes.push({ segment: selectedSegment, candidate: selectedCandidate });
+  const ok = await saveVotes(votes);
+
+  if (ok) {
+    await markVoted();
+    document.getElementById('voteForm').style.display = 'none';
+    document.getElementById('confirmBox').style.display = 'block';
+    renderResults(votes);
+  } else {
+    btn.disabled = false;
+    btn.textContent = "Submit Choice";
+    errorEl.textContent = "Something went wrong. Please try again.";
+    errorEl.classList.add('show');
+  }
+}
+
+// ---------- Results rendering ----------
+function computeOverall(votes) {
+  const counts = {};
+  CANDIDATES.forEach(c => counts[c.id] = 0);
+  votes.forEach(v => { if (counts.hasOwnProperty(v.candidate)) counts[v.candidate]++; });
+  const total = votes.length;
+  const rows = CANDIDATES.map(c => ({
+    ...c,
+    votes: counts[c.id],
+    pct: total > 0 ? Math.round((counts[c.id] / total) * 100) : 0
+  }));
+  rows.sort((a, b) => b.votes - a.votes);
+  return { rows, total };
+}
+
+function renderResultRows(rows, containerId) {
+  const container = document.getElementById(containerId);
+  const medals = ['&#129351;', '&#129352;', '&#129353;'];
+  const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+  if (rows.every(r => r.votes === 0)) {
+    container.innerHTML = '<p class="empty-note">No votes recorded yet.</p>';
+    return;
+  }
+
+  container.innerHTML = rows.map((r, i) => {
+    const rankClass = rankClasses[i] || 'rank-3';
+    return '<div class="result-row ' + rankClass + '">' +
+      '<div class="result-head">' +
+        '<div class="result-name"><span class="result-medal">' + medals[i] + '</span>' + escapeHtml(r.name) + ' — ' + escapeHtml(r.party) + '</div>' +
+        '<div class="result-stats">' + r.votes + ' votes — ' + r.pct + '%</div>' +
+      '</div>' +
+      '<div class="bar-track"><div class="bar-fill ' + rankClass + '" style="width:' + r.pct + '%"></div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderResults(votes) {
+  const overall = computeOverall(votes);
+  document.getElementById('overallTotal').textContent = overall.total + (overall.total === 1 ? ' total vote' : ' total votes');
+  renderResultRows(overall.rows, 'overallResults');
+  renderSegmentResults(votes);
+}
+
+function renderSegmentResults(votes) {
+  const filter = document.getElementById('segmentFilter').value;
+  const container = document.getElementById('segmentResults');
+  const segmentsToShow = filter === 'all' ? SEGMENTS : [filter];
+
+  container.innerHTML = segmentsToShow.map(seg => {
+    const segVotes = votes.filter(v => v.segment === seg);
+    const overall = computeOverall(segVotes);
+    const id = 'seg_' + seg.replace(/[^a-zA-Z0-9]/g, '_');
+    return '<div class="card segment-block">' +
+      '<h3>' + escapeHtml(seg) + ' <span style="color:var(--muted);font-weight:600;font-size:13px;">(' + overall.total + ' votes)</span></h3>' +
+      '<div id="' + id + '"></div>' +
+    '</div>';
+  }).join('');
+
+  segmentsToShow.forEach(seg => {
+    const segVotes = votes.filter(v => v.segment === seg);
+    const overall = computeOverall(segVotes);
+    const id = 'seg_' + seg.replace(/[^a-zA-Z0-9]/g, '_');
+    renderResultRows(overall.rows, id);
+  });
+}
+
+function buildSegmentFilter() {
+  const select = document.getElementById('segmentFilter');
+  SEGMENTS.forEach(seg => {
+    const opt = document.createElement('option');
+    opt.value = seg;
+    opt.textContent = seg;
+    select.appendChild(opt);
+  });
+  select.addEventListener('change', async () => {
+    const votes = await loadVotes();
+    renderSegmentResults(votes);
+  });
+}
+
+// ---------- Navigation ----------
+function switchMainView(view) {
+  document.getElementById('voteView').classList.toggle('active', view === 'vote');
+  document.getElementById('resultsView').classList.toggle('active', view === 'results');
+  document.getElementById('navVote').classList.toggle('active', view === 'vote');
+  document.getElementById('navResults').classList.toggle('active', view === 'results');
+}
+function switchSubView(view) {
+  document.getElementById('overallPanel').style.display = view === 'overall' ? 'block' : 'none';
+  document.getElementById('segmentPanel').style.display = view === 'segment' ? 'block' : 'none';
+  document.getElementById('subOverall').classList.toggle('active', view === 'overall');
+  document.getElementById('subSegment').classList.toggle('active', view === 'segment');
+}
+
+document.getElementById('navVote').addEventListener('click', () => switchMainView('vote'));
+document.getElementById('navResults').addEventListener('click', async () => {
+  switchMainView('results');
+  const votes = await loadVotes();
+  renderResults(votes);
+});
+document.getElementById('subOverall').addEventListener('click', () => switchSubView('overall'));
+document.getElementById('subSegment').addEventListener('click', () => switchSubView('segment'));
+document.getElementById('submitBtn').addEventListener('click', handleSubmit);
+document.getElementById('viewResultsBtn').addEventListener('click', async () => {
+  switchMainView('results');
+  const votes = await loadVotes();
+  renderResults(votes);
+});
+
+// ---------- Init ----------
+async function init() {
+  buildSegmentGrid();
+  buildCandidateList();
+  buildSegmentFilter();
+
+  const alreadyVoted = await hasAlreadyVoted();
+  if (alreadyVoted) {
+    document.getElementById('voteForm').style.display = 'none';
+    document.getElementById('alreadyVotedBox').style.display = 'block';
+  }
+
+  const votes = await loadVotes();
+  renderResults(votes);
+}
+
+init();
+</script>
+</body>
+</html>
